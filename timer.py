@@ -13,7 +13,7 @@ class Timer:
 
     def start(self):
         self.__start_time = time()
-        print(f"{strftime('%H:%M:%S', localtime(self.__start_time))} - Started {self.name}")
+        print("{} Started {}".format(self.__get_timestamp__(), self.name))
 
     def stop(self):
         self.__end_time = time()
@@ -28,13 +28,17 @@ class Timer:
             hours = elapsed / 3600
             minutes = hours % 60
             hours = floor(hours)
-            print("{} took {} hours and {:.2f} {} to complete".format(self.name, hours, minutes, unit))
+            print("{} {} took {} hours and {:.2f} {} to complete".format(self.__get_timestamp__(), self.name, hours, minutes, unit))
         elif elapsed >= 60:
             minutes = floor(elapsed / 60)
             seconds = elapsed % 60
-            print("{} took {} minutes and {:.2f} {} to complete".format(self.name, minutes, seconds, unit))
+            print("{} {} took {} minutes and {:.2f} {} to complete".format(self.__get_timestamp__(), self.name, minutes, seconds, unit))
         else:
-            print("{} took {:.2f} {} to complete".format(self.name, elapsed, unit))
+            print("{} {} took {:.2f} {} to complete".format(self.__get_timestamp__(), self.name, elapsed, unit))
+
+    @staticmethod
+    def __get_timestamp__():
+        return "{} -".format(strftime('%H:%M:%S', localtime(time())))
 
 
 if __name__ == "__main__":
