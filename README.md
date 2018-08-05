@@ -10,5 +10,5 @@ timer_test.stop()
 Will produce the following output:
 ```
 <timestamp> - Started Timer Testing
-Timer Testing took 5.00 seconds to complete
+<timestamp> - Timer Testing took 5.00 seconds to complete
 ```

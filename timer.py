@@ -1,19 +1,23 @@
 from math import floor
 from time import time, localtime, sleep, strftime
+import logging
 
 
 class Timer:
     """Simple Timer class which prints elapsed time since its creation"""
 
-    def __init__(self, name):
+    DEFAULT_TIME_FORMAT = "%H:%M:%S"
+
+    def __init__(self, name, logger=None):
         self.name = name
+        self.logger = self.__init_logger(logger)
         self.__start_time = None
         self.__end_time = None
         self.start()
 
     def start(self):
         self.__start_time = time()
-        print("{} Started {}".format(self.__get_timestamp__(), self.name))
+        self.logger.info("Started {}".format(self.name))
 
     def stop(self):
         self.__end_time = time()
@@ -28,20 +32,35 @@ class Timer:
             hours = elapsed / 3600
             minutes = hours % 60
             hours = floor(hours)
-            print("{} {} took {} hours and {:.2f} {} to complete".format(self.__get_timestamp__(), self.name, hours, minutes, unit))
+            self.logger.info("{} took {} hours and {:.2f} {} to complete".format(self.name, hours, minutes, unit))
         elif elapsed >= 60:
             minutes = floor(elapsed / 60)
             seconds = elapsed % 60
-            print("{} {} took {} minutes and {:.2f} {} to complete".format(self.__get_timestamp__(), self.name, minutes, seconds, unit))
+            self.logger.info("{} took {} minutes and {:.2f} {} to complete".format(self.name, minutes, seconds, unit))
         else:
-            print("{} {} took {:.2f} {} to complete".format(self.__get_timestamp__(), self.name, elapsed, unit))
+            self.logger.info("{} took {:.2f} {} to complete".format(self.name, elapsed, unit))
+
+    def __init_logger(self, logger):
+        if logger:
+            return logger
+        logger = logging.getLogger(__name__)
+        logger.setLevel(logging.INFO)
+        formatter = logging.Formatter('{asctime} - {message}', datefmt="%H:%M:%S", style="{")
+        handler = logging.StreamHandler()
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+        return logger
 
     @staticmethod
-    def __get_timestamp__():
-        return "{} -".format(strftime('%H:%M:%S', localtime(time())))
+    def get_default_timestamp():
+        return "{} -".format(strftime(Timer.DEFAULT_TIME_FORMAT, localtime(time())))
 
 
-if __name__ == "__main__":
+def test_Timer():
     test = Timer("Timer Testing")
     sleep(5)
     test.stop()
+
+
+if __name__ == "__main__":
+    test_Timer()
