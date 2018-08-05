@@ -1,5 +1,5 @@
 from math import floor
-from time import time, localtime, sleep, strftime
+from time import time, localtime, strftime
 import logging
 
 
@@ -54,13 +54,3 @@ class Timer:
     @staticmethod
     def get_default_timestamp():
         return "{} -".format(strftime(Timer.DEFAULT_TIME_FORMAT, localtime(time())))
-
-
-def test_Timer():
-    test = Timer("Timer Testing")
-    sleep(5)
-    test.stop()
-
-
-if __name__ == "__main__":
-    test_Timer()
