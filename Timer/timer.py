@@ -45,10 +45,11 @@ class Timer:
             return logger
         logger = logging.getLogger(__name__)
         logger.setLevel(logging.INFO)
-        formatter = logging.Formatter('{asctime} - {message}', datefmt="%H:%M:%S", style="{")
-        handler = logging.StreamHandler()
-        handler.setFormatter(formatter)
-        logger.addHandler(handler)
+        if not logger.hasHandlers():
+            formatter = logging.Formatter('{asctime} - {message}', datefmt="%H:%M:%S", style="{")
+            handler = logging.StreamHandler()
+            handler.setFormatter(formatter)
+            logger.addHandler(handler)
         return logger
 
     @staticmethod
