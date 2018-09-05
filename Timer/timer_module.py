@@ -1,6 +1,7 @@
 from math import floor
 from time import time, localtime, strftime
 import logging
+import functools
 
 
 class Timer:
@@ -55,3 +56,14 @@ class Timer:
     @staticmethod
     def get_default_timestamp():
         return "{} -".format(strftime(Timer.DEFAULT_TIME_FORMAT, localtime(time())))
+
+
+def timer(func):
+    """Timer decorator which utilizes a Timer object for timing a given function's runtime"""
+    @functools.wraps(func)
+    def wrapper_timer(*args, **kwargs):
+        timer_wrapper = Timer(func.__name__)
+        func_ret_val = func(*args, **kwargs)
+        timer_wrapper.stop()
+        return func_ret_val
+    return wrapper_timer

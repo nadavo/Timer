@@ -1,5 +1,5 @@
 from time import sleep
-from Timer import Timer
+from Timer import Timer, timer
 
 
 def test_Timer():
@@ -8,5 +8,12 @@ def test_Timer():
     test.stop()
 
 
+@timer
+def test_timer_decorator():
+    sleep(5)
+
+
 if __name__ == "__main__":
     test_Timer()
+    test_timer_decorator()
+
