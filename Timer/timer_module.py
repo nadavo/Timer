@@ -58,12 +58,21 @@ class Timer:
         return "{} -".format(strftime(Timer.DEFAULT_TIME_FORMAT, localtime(time())))
 
 
-def timer(func):
+def timer(_args=None, *, name=None, logger=None):
     """Timer decorator which utilizes a Timer object for timing a given function's runtime"""
-    @functools.wraps(func)
-    def wrapper_timer(*args, **kwargs):
-        timer_wrapper = Timer(func.__name__)
-        func_ret_val = func(*args, **kwargs)
-        timer_wrapper.stop()
-        return func_ret_val
-    return wrapper_timer
+    def timer_decorator(func):
+        @functools.wraps(func)
+        def wrapper_timer(*args, **kwargs):
+            if name is None:
+                timer_name = func.__name__
+            else:
+                timer_name = name
+            timer_wrapper = Timer(name=timer_name, logger=logger)
+            func_ret_val = func(*args, **kwargs)
+            timer_wrapper.stop()
+            return func_ret_val
+        return wrapper_timer
+    if _args is None:
+        return timer_decorator
+    else:
+        return timer_decorator(_args)
