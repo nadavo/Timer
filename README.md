@@ -1,7 +1,14 @@
 # Timer
-### Simple Yet Convenient Timer Class in Python 3
+## Simple Yet Convenient Timer For Python 3
 
-Timer object usage example:
+### Installation
+```
+pip install git+https://github.com/nadavo/Timer.git
+```
+
+### Usage
+
+##### Timer object:
 ```
 timer_test = Timer("Timer Testing")
 sleep(5)
@@ -12,7 +19,7 @@ Will produce the following output:
 <timestamp> - Started Timer Testing
 <timestamp> - Timer Testing took 5.00 seconds to complete
 ```
-Or used as a function decorator:
+##### @timer function decorator:
 ```
 @timer
 def test_timer_decorator():
