@@ -1,5 +1,6 @@
 from math import floor
-from time import time, localtime, strftime
+from time import localtime, strftime
+from timeit import default_timer as time
 import logging
 import functools
 
@@ -38,6 +39,9 @@ class Timer:
             minutes = floor(elapsed / 60)
             seconds = elapsed % 60
             self.logger.info("{} took {} minutes and {:.2f} {} to complete".format(self.name, minutes, seconds, unit))
+        elif elapsed < 0.1:
+            unit = "ms"
+            self.logger.info("{} took {:.2f} {} to complete".format(self.name, elapsed * 1000, unit))
         else:
             self.logger.info("{} took {:.2f} {} to complete".format(self.name, elapsed, unit))
 
