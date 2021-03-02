@@ -61,6 +61,12 @@ class Timer:
     def get_default_timestamp():
         return "{} -".format(strftime(Timer.DEFAULT_TIME_FORMAT, localtime(time())))
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, var_type, value, traceback):
+        self.stop()
+
 
 def timer(_args=None, *, name=None, logger=None):
     """Timer decorator which utilizes a Timer object for timing a given function's runtime"""

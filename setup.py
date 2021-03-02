@@ -5,13 +5,13 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
      name='Timer',  
-     version='0.2',
-     scripts=['Timer/timer_module.py'] ,
+     version='0.3',
+     scripts=['Timer/timer_module.py'],
      author="Nadav Oved",
      author_email="nadavo@gmail.com",
      description="A Simple Yet Convenient Timer module for Python 3",
      long_description=long_description,
-   long_description_content_type="text/markdown",
+     long_description_content_type="text/markdown",
      url="https://github.com/nadavo/Timer.git",
      packages=setuptools.find_packages(),
      classifiers=[

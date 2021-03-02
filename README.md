@@ -30,3 +30,17 @@ Calling the function will produce the following output:
 <timestamp> - Started test_timer_decorator
 <timestamp> - test_timer_decorator took 5.00 seconds to complete
 ```
+##### with Timer block:
+```
+with Timer("with Timer block"):
+    sleep(1)
+    sleep(1)
+    sleep(1)
+    sleep(1)
+    sleep(1)
+```
+Will produce the following output:
+```
+<timestamp> - Started with Timer block
+<timestamp> - with Timer block took 5.00 seconds to complete
+```
