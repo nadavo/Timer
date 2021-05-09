@@ -1,3 +1,4 @@
+import logging
 from time import sleep
 from Timer import Timer, timer
 
@@ -13,14 +14,14 @@ def test_timer_fn_decorator():
     sleep(2)
 
 
-@timer(name="Timer fn Decorator Args Testing")
+@timer(name="Timer fn Decorator Args Testing", level=logging.DEBUG)
 def test_timer_fn_decorator_args():
     sleep(2)
 
 
 def test_Timer_ms():
     test = Timer("Timer Testing (ms)")
-    sleep(0.0007)
+    sleep(0.002)
     test.stop()
 
 
