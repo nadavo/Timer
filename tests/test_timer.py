@@ -1,6 +1,6 @@
-import logging
 from time import sleep
 from Timer import Timer, timer
+import logging
 
 
 def test_Timer_object():
