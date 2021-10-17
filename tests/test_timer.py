@@ -1,5 +1,5 @@
 from time import sleep
-from Timer import Timer, timer
+from src.syct import Timer, timer
 import logging
 
 
