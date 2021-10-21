@@ -1,4 +1,5 @@
 from math import floor
+from typing import Optional
 from time import localtime, strftime
 from timeit import default_timer as time
 import logging
@@ -6,14 +7,16 @@ import functools
 
 
 class Timer:
-    """Simple Timer class which prints elapsed time since its creation"""
+    """
+    Simple Timer class which prints elapsed time since its creation
+    """
 
     DEFAULT_TIME_FORMAT = "%H:%M:%S"
 
-    def __init__(self, name: str, logger: logging.Logger = None, level: int = logging.INFO):
+    def __init__(self, name: str, logger: Optional[logging.Logger] = None, level: int = logging.INFO):
         self.name = name
         self.level = level
-        self.logger = self._init_logger(logger, level)
+        self.logger = self.init_logger(logger, level)
         self._start_time = self._start()
         self._end_time = None
 
@@ -28,7 +31,9 @@ class Timer:
         return time()
 
     def _log_elapsed(self) -> None:
-        """function which logs a correctly formatted string according to elapsed time units"""
+        """
+        Internal function which logs a correctly formatted string according to elapsed time units
+        """
         elapsed = self._end_time - self._start_time
         unit = "seconds"
         if elapsed >= 3600.:
@@ -52,10 +57,8 @@ class Timer:
         self._log_elapsed()
 
     @staticmethod
-    def _init_logger(logger: logging.Logger, level: int = logging.INFO) -> logging.Logger:
-        if logger:
-            return logger
-        else:
+    def init_logger(logger: Optional[logging.Logger] = None, level: int = logging.INFO) -> logging.Logger:
+        if logger is None:
             logger = logging.getLogger(__name__)
             logger.setLevel(level)
             if not logger.hasHandlers():
@@ -63,15 +66,17 @@ class Timer:
                 handler = logging.StreamHandler()
                 handler.setFormatter(formatter)
                 logger.addHandler(handler)
-            return logger
+        return logger
 
     @staticmethod
     def get_default_timestamp() -> str:
         return f"{strftime(Timer.DEFAULT_TIME_FORMAT, localtime(time()))} -"
 
 
-def timer(_args=None, *, name=None, logger=None, level=logging.INFO):
-    """Timer decorator which utilizes a Timer object for timing a given function's runtime"""
+def timer(_args=None, *, name: Optional[str] = None, logger: Optional[logging.Logger] = None, level: int = logging.INFO):
+    """
+    Timer decorator which utilizes a Timer object for timing a given function's runtime
+    """
     def timer_decorator(func):
         @functools.wraps(func)
         def wrapper_timer(*args, **kwargs):
