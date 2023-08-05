@@ -14,7 +14,7 @@ def test_timer_fn_decorator():
     sleep(2)
 
 
-@timer(name="Timer fn Decorator Args Testing", level=logging.DEBUG)
+@timer(name="Timer fn Decorator Args Testing", log_level=logging.DEBUG)
 def test_timer_fn_decorator_args():
     sleep(2)
 
