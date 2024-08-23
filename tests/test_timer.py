@@ -26,9 +26,10 @@ def test_Timer_ms():
 
 
 def test_Timer_with():
-    with Timer("with Timer block Testing"):
+    with Timer("with Timer block Testing") as t:
         sleep(1)
         sleep(1)
+    print("Elapsed time: ", t.elapsed)
 
 
 def run_all_tests():

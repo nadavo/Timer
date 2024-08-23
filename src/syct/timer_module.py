@@ -24,6 +24,7 @@ class Timer:
         self.logger = self.init_logger(logger, log_level, name)
         self._start_time = self._start()
         self._end_time = None
+        self.elapsed = None
 
     def __enter__(self):
         return self
@@ -39,29 +40,31 @@ class Timer:
         """
         Internal function which correctly formats a log message according to elapsed time units
         """
-        elapsed = self._end_time - self._start_time
         unit = "seconds"
-        if elapsed >= 3600.0:
+        if self.elapsed >= 3600.0:
             unit = "minutes"
-            hours = elapsed / 3600.0
+            hours = self.elapsed / 3600.0
             minutes = hours % 60.0
             hours = floor(hours)
             log_message = (
                 f"{self.name} took {hours} hours and {minutes:.2f} {unit} to complete"
             )
-        elif elapsed >= 60.0:
-            minutes = floor(elapsed / 60.0)
-            seconds = elapsed % 60.0
+        elif self.elapsed >= 60.0:
+            minutes = floor(self.elapsed / 60.0)
+            seconds = self.elapsed % 60.0
             log_message = f"{self.name} took {minutes} minutes and {seconds:.2f} {unit} to complete"
-        elif elapsed < 0.1:
+        elif self.elapsed < 0.1:
             unit = "ms"
-            log_message = f"{self.name} took {elapsed * 1000.:.2f} {unit} to complete"
+            log_message = (
+                f"{self.name} took {self.elapsed * 1000.:.2f} {unit} to complete"
+            )
         else:
-            log_message = f"{self.name} took {elapsed:.2f} {unit} to complete"
+            log_message = f"{self.name} took {self.elapsed:.2f} {unit} to complete"
         return log_message
 
     def stop(self) -> None:
         self._end_time = default_timer()
+        self.elapsed = self._end_time - self._start_time
         self.logger.log(msg=self._format_elapsed_msg(), level=self.log_level)
 
     @staticmethod
