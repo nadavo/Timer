@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
      name='syct',
-     version='0.4.4',
+     version='0.4.5',
      author="Nadav Oved",
      author_email="nadavo@gmail.com",
      description="A Simple Yet Convenient Timer module for Python 3",
