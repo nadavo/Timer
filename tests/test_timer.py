@@ -109,3 +109,33 @@ def test_custom_logger(caplog):
 
     assert "test_custom_logger" in caplog.text
     assert "DEBUG" in caplog.text
+
+
+def test_init_logger_no_logger_provided():
+    """Tests that a new logger is created when none is provided."""
+    logger = Timer.init_logger(name="new_logger", level=logging.DEBUG)
+    assert isinstance(logger, logging.Logger)
+    assert logger.name == "new_logger"
+    assert logger.level == logging.DEBUG
+    assert len(logger.handlers) == 1
+    assert isinstance(logger.handlers[0], logging.StreamHandler)
+    # Clean up handlers to avoid affecting other tests
+    logger.handlers = []
+
+def test_init_logger_with_existing_logger():
+    """Tests that an existing logger is returned unmodified."""
+    existing_logger = logging.getLogger("existing_logger")
+    existing_logger.setLevel(logging.WARNING)
+    returned_logger = Timer.init_logger(logger=existing_logger)
+    assert returned_logger is existing_logger
+    assert returned_logger.level == logging.WARNING
+
+def test_init_logger_does_not_add_handler_if_one_exists():
+    """Tests that a handler is not added if the logger already has one."""
+    logger = logging.getLogger("handler_test_logger")
+    logger.addHandler(logging.NullHandler())
+    assert len(logger.handlers) == 1
+    Timer.init_logger(logger=logger)
+    assert len(logger.handlers) == 1
+    # Clean up handlers
+    logger.handlers = []

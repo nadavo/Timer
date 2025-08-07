@@ -75,7 +75,7 @@ class Timer:
         if logger is None:
             logger = logging.getLogger(name)
             logger.setLevel(level)
-            if not logger.hasHandlers():
+            if not logger.handlers:
                 formatter = logging.Formatter(
                     "{levelname} - {asctime} - {message}",
                     datefmt=Timer.DEFAULT_TIME_FORMAT,
