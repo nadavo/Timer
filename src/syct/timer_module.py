@@ -19,6 +19,14 @@ class Timer:
         log_level: int = logging.INFO,
         logger: Optional[logging.Logger] = None,
     ):
+        """
+        Initializes the Timer object.
+
+        Args:
+            name (str): The name of the timer.
+            log_level (int, optional): The logging level. Defaults to logging.INFO.
+            logger (Optional[logging.Logger], optional): A logger instance. Defaults to None.
+        """
         self.name = name
         self.log_level = log_level
         self.logger = self.init_logger(logger, log_level, name)
@@ -27,12 +35,15 @@ class Timer:
         self.elapsed = None
 
     def __enter__(self):
+        """Starts the timer upon entering the context."""
         return self
 
     def __exit__(self, var_type, value, traceback):
+        """Stops the timer upon exiting the context."""
         self.stop()
 
     def _start(self) -> float:
+        """Starts the timer and logs the start time."""
         self.logger.log(msg=f"Started Timer for {self.name}", level=self.log_level)
         return default_timer()
 
@@ -62,6 +73,7 @@ class Timer:
         return log_message
 
     def stop(self) -> None:
+        """Stops the timer, calculates the elapsed time, and logs the result."""
         self._end_time = default_timer()
         self.elapsed = self._end_time - self._start_time
         self.logger.log(msg=self._format_elapsed_msg(), level=self.log_level)
@@ -72,6 +84,20 @@ class Timer:
         level: int = logging.INFO,
         name: str = __name__,
     ) -> logging.Logger:
+        """
+        Initializes and returns a logger.
+
+        If a logger is provided, it is returned as is. Otherwise, a new logger
+        is created with a stream handler if it doesn't have any handlers.
+
+        Args:
+            logger (Optional[logging.Logger], optional): An existing logger. Defaults to None.
+            level (int, optional): The logging level for a new logger. Defaults to logging.INFO.
+            name (str, optional): The name for a new logger. Defaults to __name__.
+
+        Returns:
+            logging.Logger: The initialized logger.
+        """
         if logger is None:
             logger = logging.getLogger(name)
             logger.setLevel(level)
@@ -88,6 +114,7 @@ class Timer:
 
     @staticmethod
     def get_default_timestamp() -> str:
+        """Returns a timestamp string in the default format."""
         return f"{strftime(Timer.DEFAULT_TIME_FORMAT, localtime(default_timer()))} -"
 
 
