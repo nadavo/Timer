@@ -43,9 +43,8 @@ class Timer:
         unit = "seconds"
         if self.elapsed >= 3600.0:
             unit = "minutes"
-            hours = self.elapsed / 3600.0
-            minutes = hours % 60.0
-            hours = floor(hours)
+            hours = floor(self.elapsed / 3600.0)
+            minutes = (self.elapsed % 3600.0) / 60.0
             log_message = (
                 f"{self.name} took {hours} hours and {minutes:.2f} {unit} to complete"
             )

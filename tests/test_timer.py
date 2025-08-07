@@ -1,44 +1,111 @@
+import pytest
 from time import sleep
-from src.syct import Timer, timer
+from syct import Timer, timer
 import logging
 
+# It's better to have a small tolerance for timing tests
+# as the execution time can vary slightly.
+TOLERANCE = 0.1  # 10% tolerance
 
-def test_Timer_object():
-    test = Timer("Timer Testing")
-    sleep(2)
-    test.stop()
+def test_timer_class():
+    """Tests the Timer class basic functionality."""
+    sleep_time = 1
+    t = Timer("test_timer_class")
+    sleep(sleep_time)
+    t.stop()
+    assert t.elapsed is not None
+    assert sleep_time <= t.elapsed <= sleep_time + TOLERANCE
 
+def test_timer_context_manager():
+    """Tests the Timer class as a context manager."""
+    sleep_time = 1
+    with Timer("test_timer_context_manager") as t:
+        sleep(sleep_time)
+    assert t.elapsed is not None
+    assert sleep_time <= t.elapsed <= sleep_time + TOLERANCE
 
-@timer
-def test_timer_fn_decorator():
-    sleep(2)
+def test_timer_decorator_no_args():
+    """Tests the timer decorator without arguments."""
+    sleep_time = 1
+    @timer
+    def decorated_function():
+        sleep(sleep_time)
+        return "done"
 
+    result = decorated_function()
+    assert result == "done"
+    # We can't directly access the timer object here,
+    # but we can check the log output.
 
-@timer(name="Timer fn Decorator Args Testing", log_level=logging.DEBUG)
-def test_timer_fn_decorator_args():
-    sleep(2)
+def test_timer_decorator_with_args(caplog):
+    """Tests the timer decorator with arguments."""
+    sleep_time = 1
+    timer_name = "test_decorator_with_args"
 
+    @timer(name=timer_name, log_level=logging.WARNING)
+    def decorated_function():
+        sleep(sleep_time)
+        return "done"
 
-def test_Timer_ms():
-    test = Timer("Timer Testing (ms)")
-    sleep(0.002)
-    test.stop()
+    with caplog.at_level(logging.WARNING):
+        result = decorated_function()
 
+    assert result == "done"
+    assert timer_name in caplog.text
+    assert "took" in caplog.text
+    assert "WARNING" in caplog.text
 
-def test_Timer_with():
-    with Timer("with Timer block Testing") as t:
-        sleep(1)
-        sleep(1)
-    print("Elapsed time: ", t.elapsed)
+def test_format_ms(caplog):
+    """Tests the millisecond formatting of the log message."""
+    sleep_time = 0.01  # 10 ms
+    with caplog.at_level(logging.INFO):
+        with Timer("test_format_ms") as t:
+            sleep(sleep_time)
 
+    assert "ms" in caplog.text
+    assert t.elapsed is not None
+    assert sleep_time <= t.elapsed <= sleep_time + TOLERANCE
 
-def run_all_tests():
-    test_Timer_object()
-    test_timer_fn_decorator()
-    test_timer_fn_decorator_args()
-    test_Timer_ms()
-    test_Timer_with()
+def test_format_seconds(caplog):
+    """Tests the seconds formatting of the log message."""
+    sleep_time = 1
+    with caplog.at_level(logging.INFO):
+        with Timer("test_format_seconds") as t:
+            sleep(sleep_time)
 
+    assert "seconds" in caplog.text
+    assert t.elapsed is not None
+    assert sleep_time <= t.elapsed <= sleep_time + TOLERANCE
 
-if __name__ == "__main__":
-    run_all_tests()
+def test_format_minutes(caplog):
+    """Tests the minutes formatting of the log message."""
+    # We don't want to wait for 60 seconds, so we can cheat by setting the elapsed time manually.
+    with caplog.at_level(logging.INFO):
+        t = Timer("test_format_minutes")
+        t.elapsed = 70  # 1 minute 10 seconds
+        t.logger.log(msg=t._format_elapsed_msg(), level=t.log_level)
+
+    assert "minutes" in caplog.text
+    assert "1 minutes and 10.00 seconds" in caplog.text
+
+def test_format_hours(caplog):
+    """Tests the hours formatting of the log message."""
+    with caplog.at_level(logging.INFO):
+        t = Timer("test_format_hours")
+        t.elapsed = 3670  # 1 hour 1 minute 10 seconds
+        t.logger.log(msg=t._format_elapsed_msg(), level=t.log_level)
+
+    assert "hours" in caplog.text
+    assert "1 hours and 1.17 minutes" in caplog.text
+
+def test_custom_logger(caplog):
+    """Tests using a custom logger."""
+    custom_logger = logging.getLogger("custom_test_logger")
+    custom_logger.setLevel(logging.DEBUG)
+
+    with caplog.at_level(logging.DEBUG, logger="custom_test_logger"):
+        with Timer("test_custom_logger", logger=custom_logger, log_level=logging.DEBUG):
+            sleep(0.01)
+
+    assert "test_custom_logger" in caplog.text
+    assert "DEBUG" in caplog.text
